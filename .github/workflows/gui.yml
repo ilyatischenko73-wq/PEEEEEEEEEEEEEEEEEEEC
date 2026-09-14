@@ -1,0 +1,43 @@
+name: PEEC GUI
+on:
+  push:
+    paths:
+      - 'gui/**'
+      - 'peec_gui.py'
+      - 'fortran/**'
+      - '.github/workflows/gui.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+      MPLBACKEND: Agg
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: gui/requirements.txt
+      - run: python -m pip install -r gui/requirements.txt
+      - name: Data model and publication figures
+        run: python -m unittest discover -s gui/tests -v
+      - name: Qt widgets, VTK and process lifecycle
+        run: python -m gui.tests.smoke_gui
+      - name: Install Fortran
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y gfortran liblapack-dev libblas-dev
+      - name: GUI configurations with the real solver
+        if: runner.os == 'Linux'
+        run: |
+          make -f Makefile.fortran
+          python -m gui.tests.solver_integration build/fortran/PeecSolverFortran
