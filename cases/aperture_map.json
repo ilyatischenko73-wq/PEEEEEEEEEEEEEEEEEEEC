@@ -1,0 +1,110 @@
+{
+  "node_mapping": [
+    {
+      "closed_node": 8,
+      "open_node": 8
+    },
+    {
+      "closed_node": 9,
+      "open_node": 9
+    },
+    {
+      "closed_node": 10,
+      "open_node": 10
+    },
+    {
+      "closed_node": 11,
+      "open_node": 11
+    },
+    {
+      "closed_node": 176,
+      "open_node": 176
+    },
+    {
+      "closed_node": 177,
+      "open_node": 177
+    },
+    {
+      "closed_node": 178,
+      "open_node": 178
+    },
+    {
+      "closed_node": 179,
+      "open_node": 179
+    },
+    {
+      "closed_node": 180,
+      "open_node": 180
+    },
+    {
+      "closed_node": 181,
+      "open_node": 181
+    },
+    {
+      "closed_node": 182,
+      "open_node": 182
+    },
+    {
+      "closed_node": 183,
+      "open_node": 183
+    },
+    {
+      "closed_node": 184,
+      "open_node": 184
+    },
+    {
+      "closed_node": 185,
+      "open_node": 185
+    },
+    {
+      "closed_node": 186,
+      "open_node": 186
+    },
+    {
+      "closed_node": 187,
+      "open_node": 187
+    }
+  ],
+  "cover_edges": [
+    1682,
+    1711,
+    1742,
+    1743,
+    1776,
+    1833,
+    1846,
+    1887,
+    1956,
+    1979,
+    1981,
+    2006,
+    2008,
+    2016,
+    2021,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035,
+    2036,
+    2037,
+    2038,
+    2039,
+    2040,
+    2041,
+    2042,
+    2043,
+    2044,
+    2045,
+    2046,
+    2047
+  ]
+}

@@ -1,0 +1,110 @@
+{
+    "node_mapping": [
+        {
+            "closed_node": 110,
+            "open_node": 110
+        },
+        {
+            "closed_node": 111,
+            "open_node": 111
+        },
+        {
+            "closed_node": 112,
+            "open_node": 112
+        },
+        {
+            "closed_node": 113,
+            "open_node": 113
+        },
+        {
+            "closed_node": 114,
+            "open_node": 114
+        },
+        {
+            "closed_node": 119,
+            "open_node": 119
+        },
+        {
+            "closed_node": 123,
+            "open_node": 121
+        },
+        {
+            "closed_node": 128,
+            "open_node": 125
+        },
+        {
+            "closed_node": 132,
+            "open_node": 127
+        },
+        {
+            "closed_node": 137,
+            "open_node": 131
+        },
+        {
+            "closed_node": 141,
+            "open_node": 133
+        },
+        {
+            "closed_node": 146,
+            "open_node": 137
+        },
+        {
+            "closed_node": 147,
+            "open_node": 144
+        },
+        {
+            "closed_node": 148,
+            "open_node": 146
+        },
+        {
+            "closed_node": 149,
+            "open_node": 148
+        },
+        {
+            "closed_node": 150,
+            "open_node": 139
+        }
+    ],
+    "cover_edges": [
+        201,
+        203,
+        205,
+        207,
+        215,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        232,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        249,
+        251,
+        252,
+        253,
+        254,
+        255,
+        256,
+        257,
+        258,
+        266,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275
+    ]
+}

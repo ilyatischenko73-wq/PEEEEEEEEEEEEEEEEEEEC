@@ -1,0 +1,26 @@
+# Generated/cache
+cache/
+results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Test reports / logs
+tests/reports/
+*.log
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.out
+build/
+bin/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

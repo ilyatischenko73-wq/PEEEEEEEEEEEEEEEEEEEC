@@ -1,0 +1,13 @@
+/PeecRcsTest \
+                                    --mesh meshes/plate.msh \
+                                    --parallel 12 \
+                                    --ka 1.0 \
+                                    --a 1.0 \
+                                    --E 1.0 \
+                                    --theta 0 \
+                                    --phi 0 \
+                                    --polarization horizontal \
+                                    --phase 0 \
+                                    --rcs-dual \
+                                    --rcs-order 6 \
+                                    --output results/rcs.csv

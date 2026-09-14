@@ -1,0 +1,18 @@
+# ============================================================
+# PEEC distributed equivalent slot cells
+#
+# node_a node_b support_length_m
+#
+# Node indices are INTERNAL 0-based PEEC indices reconstructed
+# exactly from the Gmsh $Nodes file order.
+#
+# longitudinal_axis = x
+# slot_length_m      = 1.00000000000000000e+00
+# slot_gap_width_m   = 1.00000000000000000e+00
+# ============================================================
+
+8 11 1.25000000000000000e-01
+176 184 2.50000000000000000e-01
+177 183 2.50000000000000000e-01
+178 182 2.50000000000000000e-01
+9 10 1.25000000000000000e-01

@@ -1,0 +1,60 @@
+# Run from the PEEC project root: make -f Makefile.tests verify
+# Reuse the production source list, with separate objects and executables.
+include Makefile
+.DEFAULT_GOAL := verify
+
+PYTHON ?= python3
+VERIFY_DIR := build/verification
+VERIFY_FLAGS := -std=c17 -O2 -g -Wall -Wextra -Wpedantic -fopenmp -Iinclude -MMD -MP
+VERIFY_LIBS := -fopenmp -lm
+VERIFY_OBJECTS := $(patsubst %.c,$(VERIFY_DIR)/%.o,$(COMMON_SOURCES))
+VERIFY_MAIN := $(patsubst %.c,$(VERIFY_DIR)/%.o,$(MAIN_SOURCE))
+VERIFY_CORE := $(VERIFY_DIR)/test_core
+VERIFY_SOLVER := $(VERIFY_DIR)/PeecSolver
+VERIFY_CONFIG := $(VERIFY_DIR)/test_config_cli
+
+VERIFY_ASAN_DIR := $(VERIFY_DIR)/asan
+VERIFY_ASAN_FLAGS := -std=c17 -O1 -g -Wall -Wextra -fopenmp -Iinclude -MMD -MP -fsanitize=address,undefined -fno-omit-frame-pointer
+VERIFY_ASAN_OBJECTS := $(patsubst %.c,$(VERIFY_ASAN_DIR)/%.o,$(COMMON_SOURCES))
+VERIFY_ASAN := $(VERIFY_ASAN_DIR)/test_config_lifetime
+
+.PHONY: verify verify-core verify-cli verify-asan verify-spice
+
+verify: $(VERIFY_CORE) $(VERIFY_SOLVER) $(VERIFY_CONFIG)
+	$(PYTHON) tests/run_tests.py --group default --core $(VERIFY_CORE) --solver $(VERIFY_SOLVER) --config-parser $(VERIFY_CONFIG)
+
+verify-core: $(VERIFY_CORE)
+	$(PYTHON) tests/run_tests.py --group core --core $(VERIFY_CORE)
+
+verify-cli: $(VERIFY_SOLVER) $(VERIFY_CONFIG)
+	$(PYTHON) tests/run_tests.py --group cli --solver $(VERIFY_SOLVER) --config-parser $(VERIFY_CONFIG)
+
+verify-asan: $(VERIFY_ASAN)
+	$(PYTHON) tests/run_tests.py --group asan --asan $(VERIFY_ASAN)
+
+verify-spice: $(VERIFY_SOLVER)
+	$(PYTHON) tests/run_tests.py --group spice --solver $(VERIFY_SOLVER)
+
+$(VERIFY_CORE): $(VERIFY_DIR)/tests/test_core.o $(VERIFY_OBJECTS)
+	$(CC) $^ -o $@ $(VERIFY_LIBS)
+
+$(VERIFY_SOLVER): $(VERIFY_MAIN) $(VERIFY_OBJECTS)
+	$(CC) $^ -o $@ $(VERIFY_LIBS)
+
+$(VERIFY_CONFIG): $(VERIFY_DIR)/tests/test_config_cli.o $(VERIFY_DIR)/src/config.o
+	$(CC) $^ -o $@ $(VERIFY_LIBS)
+
+$(VERIFY_ASAN): $(VERIFY_ASAN_DIR)/tests/test_config_lifetime.o $(VERIFY_ASAN_OBJECTS)
+	$(CC) $^ -o $@ $(VERIFY_LIBS) -fsanitize=address,undefined
+
+$(VERIFY_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(VERIFY_FLAGS) -c $< -o $@
+
+$(VERIFY_ASAN_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(VERIFY_ASAN_FLAGS) -c $< -o $@
+
+-include $(VERIFY_OBJECTS:.o=.d) $(VERIFY_MAIN:.o=.d)
+-include $(VERIFY_DIR)/tests/test_core.d $(VERIFY_DIR)/tests/test_config_cli.d
+-include $(VERIFY_ASAN_OBJECTS:.o=.d) $(VERIFY_ASAN_DIR)/tests/test_config_lifetime.d
