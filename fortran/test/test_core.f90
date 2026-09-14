@@ -1,5 +1,6 @@
 program test_core
   use peec_io
+  use peec_aperture_json
   implicit none
   integer :: passed=0
   call test_quadrature()
@@ -10,6 +11,7 @@ program test_core
   call test_shunt()
   call test_slots()
   call test_aperture()
+  call test_json_tokens()
   write(*,'(a,i0,a)') 'PASS: ',passed,' numerical checks'
 contains
   subroutine check(ok,name)
@@ -188,6 +190,13 @@ contains
     call check(.true.,'LC slot transient energy')
     call slot_line(0.1_dp,2.0_dp,0.002_dp,1.0_dp,1.0_dp,lp,cp)
     call check(abs(lp*cp/(4e-7_dp*pi*eps0)-1)<1e-12_dp,'slot transmission-line identity')
+  end subroutine
+  subroutine test_json_tokens()
+    type(token), allocatable :: args(:)
+    call lex_json('{"node_mapping": [{"closed_node": 0, "open_node": 2}], "cover_edges": [1]}',args)
+    call check(size(args)==21,'JSON token count')
+    call check(args(2)%s=='"node_mapping"'.and.args(6)%s=='"closed_node"'.and. &
+      args(10)%s=='"open_node"'.and.args(16)%s=='"cover_edges"','JSON keys retain full length')
   end subroutine
   subroutine test_aperture()
     type(mesh_type) :: closed,opened

@@ -164,7 +164,7 @@ contains
     type(coupling_type) :: work
     integer, allocatable :: map(:)
     real(dp) :: scale,tol
-    integer :: k,a,b,e,j
+    integer :: k,a,b,e
     info=1
     if(size(mapping,1)/=2.or.size(mapping,2)==0.or.size(cover)==0) return
     allocate(map(size(closed%xyz,2))); map=0

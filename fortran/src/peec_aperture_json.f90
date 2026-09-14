@@ -13,7 +13,7 @@ contains
       if(iachar(c)<=32) then
         i=i+1
       else if(index('{}[],:',c)>0) then
-        args=[args,token(c)]; i=i+1
+        call append_token(args,c); i=i+1
       else if(c=='"') then
         j=i+1
         do while(j<=n)
@@ -22,7 +22,7 @@ contains
           j=j+1
         end do
         call require(j<=n,'unterminated JSON string')
-        args=[args,token(text(i:j))]; i=j+1
+        call append_token(args,text(i:j)); i=j+1
       else
         j=i
         do while(j<=n)
@@ -30,7 +30,7 @@ contains
           j=j+1
         end do
         call require(j>i,'invalid JSON token')
-        args=[args,token(text(i:j-1))]; i=j
+        call append_token(args,text(i:j-1)); i=j
       end if
     end do
   end subroutine

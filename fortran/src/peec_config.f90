@@ -58,10 +58,21 @@ module peec_config
     logical :: strike_xyz_set=.false.,return_xyz_set=.false.,shunt_a_xyz_set=.false.,shunt_b_xyz_set=.false.
   end type
 contains
+  subroutine append_token(args,word)
+    type(token), allocatable, intent(inout) :: args(:)
+    character(*), intent(in) :: word
+    type(token), allocatable :: work(:)
+    integer :: n
+    n=size(args)
+    allocate(work(n+1))
+    work(:n)=args
+    work(n+1)%s=word
+    call move_alloc(work,args)
+  end subroutine
   subroutine tokenize(line,args)
     character(*), intent(in) :: line
     type(token), allocatable, intent(inout) :: args(:)
-    integer :: i,n,start
+    integer :: i,n
     character :: quote,ch
     character(:), allocatable :: word
     n=len_trim(line); i=1
@@ -89,7 +100,7 @@ contains
         i=i+1
       end do
       call require(quote==achar(0),'unclosed quote in configuration')
-      args=[args,token(word)]
+      call append_token(args,word)
       if(i<=n) then
         if(line(i:i)=='#') exit
       end if
@@ -154,7 +165,7 @@ contains
       call get_command_argument(i,length=length)
       allocate(character(length) :: arg)
       call get_command_argument(i,arg)
-      args=[args,token(arg)]
+      call append_token(args,arg)
       deallocate(arg)
     end do
     if(args(1)%s=='--config') then
