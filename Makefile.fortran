@@ -1,0 +1,39 @@
+# Run from the repository root. This build does not compile or link the C solver.
+FC = gfortran
+FFLAGS ?= -O2 -std=f2008 -Wall -Wextra -fopenmp -ffree-line-length-none
+LDLIBS ?= -llapack -lblas
+FBUILD ?= build/fortran
+FMODULES = fortran/src/peec_base.f90 fortran/src/peec_linalg.f90 \
+ fortran/src/peec_quadrature.f90 fortran/src/peec_mesh.f90 \
+ fortran/src/peec_config.f90 fortran/src/peec_model.f90 \
+ fortran/src/peec_physics.f90 fortran/src/peec_transient.f90 \
+ fortran/src/peec_aperture_json.f90 fortran/src/peec_io.f90
+
+.PHONY: all test compare clean debug
+all: $(FBUILD)/PeecSolverFortran
+
+$(FBUILD):
+	mkdir -p $@
+
+# One compiler invocation makes module dependency order explicit, including with make -j.
+$(FBUILD)/PeecSolverFortran: $(FMODULES) fortran/app/main.f90 Makefile.fortran | $(FBUILD)
+	$(FC) $(FFLAGS) -J$(FBUILD) -I$(FBUILD) $(FMODULES) fortran/app/main.f90 -o $@ $(LDLIBS)
+
+$(FBUILD)/test_core: $(FMODULES) fortran/test/test_core.f90 Makefile.fortran | $(FBUILD)
+	mkdir -p $(FBUILD)/test-modules
+	$(FC) $(FFLAGS) -J$(FBUILD)/test-modules -I$(FBUILD)/test-modules $(FMODULES) fortran/test/test_core.f90 -o $@ $(LDLIBS)
+
+test: $(FBUILD)/test_core $(FBUILD)/PeecSolverFortran
+	$(FBUILD)/test_core
+	python3 fortran/test/compare.py --fortran $(FBUILD)/PeecSolverFortran --smoke-only
+
+compare: $(FBUILD)/PeecSolverFortran
+	$(MAKE) -f Makefile
+	python3 fortran/test/compare.py --fortran $(FBUILD)/PeecSolverFortran --c-solver ./PeecSolver
+
+debug:
+	$(MAKE) -f Makefile.fortran FBUILD=build/fortran-debug \
+	  FFLAGS="-O0 -g -std=f2008 -Wall -Wextra -fopenmp -ffree-line-length-none -fcheck=all -fbacktrace" test
+
+clean:
+	rm -rf $(FBUILD)

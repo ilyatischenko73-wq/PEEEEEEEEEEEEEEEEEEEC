@@ -1,0 +1,38 @@
+name: Fortran port
+on:
+  push:
+    paths:
+      - 'fortran/**'
+      - 'Makefile.fortran'
+      - '.github/workflows/fortran.yml'
+      - 'src/**'
+      - 'include/**'
+      - 'meshes/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compilers and LAPACK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran liblapack-dev libblas-dev
+      - name: Compile and run numerical and CLI tests
+        run: make -f Makefile.fortran test
+      - name: Compare against original C solver
+        run: make -f Makefile.fortran compare
+      - name: Check bounds and runtime errors
+        run: make -f Makefile.fortran debug
+      - name: Save verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortran-verification
+          path: build/fortran-tests/
