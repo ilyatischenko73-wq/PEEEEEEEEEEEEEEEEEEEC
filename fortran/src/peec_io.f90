@@ -18,9 +18,23 @@ contains
   end function
   subroutine mkdir(path)
     character(*), intent(in) :: path
-    integer :: status,cmdstatus
+    integer :: status,cmdstatus,i
+    character(32) :: os
+    character(:), allocatable :: native
     if(len_trim(path)==0.or.path=='.') return
-    call execute_command_line('mkdir -p -- '//shell_quote(path),exitstat=status,cmdstat=cmdstatus)
+    call get_environment_variable('OS',os,status=cmdstatus)
+    if(cmdstatus==0.and.trim(os)=='Windows_NT') then
+      native=path
+      do i=1,len(native)
+        if(native(i:i)=='/') native(i:i)=achar(92)
+      end do
+      ! Prevent cmd.exe expansion; spaces and ordinary quoted paths are accepted.
+      call require(scan(native,'"%!&|<>^')==0,'unsupported character in Windows output path')
+      call execute_command_line('if not exist "'//native//'\\." mkdir "'//native//'"', &
+        exitstat=status,cmdstat=cmdstatus)
+    else
+      call execute_command_line('mkdir -p -- '//shell_quote(path),exitstat=status,cmdstat=cmdstatus)
+    end if
     call require(cmdstatus==0,'cannot execute mkdir')
     call require(status==0,'cannot create output directory: '//path)
   end subroutine
@@ -28,7 +42,7 @@ contains
     character(*), intent(in) :: path
     integer, intent(out) :: u
     integer :: k,ios
-    k=index(path,'/',back=.true.)
+    k=max(index(path,'/',back=.true.),index(path,achar(92),back=.true.))
     if(k>1) call mkdir(path(:k-1))
     open(newunit=u,file=path,status='replace',action='write',iostat=ios)
     call require(ios==0,'cannot write '//path)

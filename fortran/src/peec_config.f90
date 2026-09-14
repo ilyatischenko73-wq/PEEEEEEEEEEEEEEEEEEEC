@@ -136,8 +136,9 @@ contains
     print '(a)', 'Fortran solver; ASCII Gmsh 4.1; all external node/edge indices are zero-based.'
     print '(a)', 'Run from the repository root. See fortran/README_RU.md.'
   end subroutine
-  subroutine read_config(cfg)
+  subroutine read_config(cfg,config_file)
     type(config_type), intent(out) :: cfg
+    character(*), optional, intent(in) :: config_file
     type(token), allocatable :: args(:)
     character(:), allocatable :: arg,path
     character(16384) :: line
@@ -156,6 +157,11 @@ contains
     cfg%aperture_map_file=''
     cfg%slot_cells_file=''
     allocate(args(0))
+    if(present(config_file)) then
+      call append_token(args,'--config')
+      call append_token(args,config_file)
+      n=2
+    else
     n=command_argument_count()
     if(n==0) then
       call help()
@@ -168,6 +174,7 @@ contains
       call append_token(args,arg)
       deallocate(arg)
     end do
+    end if
     if(args(1)%s=='--config') then
       call require(n==2,'--config FILE must be used without CLI overrides')
       path=args(2)%s

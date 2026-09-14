@@ -2,8 +2,67 @@ program peec_solver_fortran
   use peec_io
   use peec_aperture_json
   implicit none
+  ! 0: menu; 1: mesh; 2: scattering; 3: RCS; 4: closed lightning;
+  ! 5: two-stage lightning; 6: slot cells; 7: custom_config.
+  ! Command-line arguments take precedence over selected_task.
+  integer, parameter :: selected_task=0
+  character(*), parameter :: custom_config='cases/run_scattering.cfg'
   type(config_type) :: cfg
-  call read_config(cfg)
+  integer :: choice,ios
+  character(4096) :: input,config_path
+  if(command_argument_count()>0) then
+    call read_config(cfg)
+  else
+    choice=selected_task
+    config_path=custom_config
+    if(choice==0) then
+      do
+        print '(a)', 'PEEC Fortran: select task'
+        print '(a)', '1 Mesh information (plate)'
+        print '(a)', '2 Harmonic scattering'
+        print '(a)', '3 RCS'
+        print '(a)', '4 Lightning: closed body'
+        print '(a)', '5 Lightning: two stages'
+        print '(a)', '6 Lightning: slot cells'
+        print '(a)', '7 Custom configuration file'
+        print '(a)', '0 Exit'
+        read(*,'(a)',iostat=ios) input
+        if(ios<0) stop
+        if(ios/=0) error stop 'Cannot read menu input'
+        input=trim(adjustl(input))
+        if(len_trim(input)/=1) cycle
+        if(verify(trim(input),'01234567')/=0) cycle
+        read(input,*) choice
+        exit
+      end do
+      if(choice==0) stop
+      if(choice==7) then
+        print '(a)', 'Configuration path (without surrounding quotes):'
+        read(*,'(a)',iostat=ios) config_path
+        if(ios/=0) error stop 'Cannot read configuration path'
+      end if
+    end if
+    select case(choice)
+    case(1)
+      config_path='fortran/cases/mesh_info.cfg'
+    case(2)
+      config_path='cases/run_scattering.cfg'
+    case(3)
+      config_path='cases/run_rcs.cfg'
+    case(4)
+      config_path='fortran/cases/lightning_closed.cfg'
+    case(5)
+      config_path='cases/run_lightning.cfg'
+    case(6)
+      config_path='cases/run_lightning_slot_cells.cfg'
+    case(7)
+      ! Use custom_config or the path entered in the menu.
+    case default
+      error stop 'selected_task must be between 0 and 7'
+    end select
+    print '(a)', 'Configuration: '//trim(config_path)
+    call read_config(cfg,trim(config_path))
+  end if
   select case(cfg%task)
   case('mesh-info')
     block

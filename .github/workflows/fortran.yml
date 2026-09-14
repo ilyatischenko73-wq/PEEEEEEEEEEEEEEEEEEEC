@@ -26,6 +26,11 @@ jobs:
           sudo apt-get install -y gfortran liblapack-dev libblas-dev
       - name: Compile and run numerical and CLI tests
         run: make -f Makefile.fortran test
+      - name: Check interactive menu and custom configuration
+        run: |
+          printf 'bad\n1\n' | ./build/fortran/PeecSolverFortran
+          printf '7\nfortran/cases/plate_scattering.cfg\n' | ./build/fortran/PeecSolverFortran
+          printf '0\n' | ./build/fortran/PeecSolverFortran
       - name: Compare against original C solver
         run: make -f Makefile.fortran compare
       - name: Check bounds and runtime errors

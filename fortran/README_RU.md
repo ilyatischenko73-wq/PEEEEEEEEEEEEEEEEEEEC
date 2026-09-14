@@ -8,7 +8,11 @@
 ## Сборка и запуск
 
 Команды выполняются **из корня репозитория**, где находятся папки cases и meshes.
-Сборка рассчитана на Linux. Для Debian/Ubuntu:
+**Windows / Visual Studio / Intel ifx:** [пошаговая инструкция](WINDOWS_RU.md).
+При запуске без аргументов открывается меню задач. Выбор также задаётся
+константой selected_task в fortran/app/main.f90.
+
+Для Debian/Ubuntu:
 
 ```sh
 sudo apt-get install gfortran liblapack-dev libblas-dev make
@@ -126,4 +130,4 @@ lightning_slot_cells_*. Сохранены phi_V, charge_C, sigma_C_m2, current_
   частоте/геометрии. Ограничения исходного README_RU.md и шаблонные параметры
   щели остаются актуальными.
 - Windows, GPU-исполнение и ngspice этим набором не проверяются.
-  Создание каталогов использует POSIX mkdir; для Windows нужен Linux/WSL.
+  Подготовлена нативная сборка Windows через Intel ifx; инструкция WINDOWS_RU.md.
