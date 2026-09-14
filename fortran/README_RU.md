@@ -92,7 +92,7 @@ Python 3 нужен только для тестового скрипта и с�
 ## Выходные файлы
 
 Имена VTK и полей соответствуют исходному решателю:
-scattering_surface.vtk, scattering_edges.vtk, rcs_surface.vtk,
+scattering_surface.vtk, scattering_edges.vtk, rcs_solution_surface.vtk,
 lightning_closed_surface_000000.vtk, lightning_stage1_*, lightning_stage2_*,
 lightning_slot_cells_*. Сохранены phi_V, charge_C, sigma_C_m2, current_A,
 комплексные re/im/abs поля и векторы J_A_m.

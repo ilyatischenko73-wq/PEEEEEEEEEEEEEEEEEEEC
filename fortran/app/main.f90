@@ -21,6 +21,7 @@ contains
     type(model_type) :: model
     complex(dp), allocatable :: u(:),current(:),phi(:),charge(:)
     real(dp) :: f,err
+    character(:), allocatable :: prefix
     call assemble(c%mesh_file,model,c%parallel_threads)
     if(c%save_matrices) call export_matrices(c%matrix_directory,model)
     f=c%frequency
@@ -31,7 +32,9 @@ contains
     write(*,'(a,es18.9e3)') 'Maximum |I_e|      : ',maxval(abs(current))
     write(*,'(a,es18.9e3)') 'Maximum |V_j|      : ',maxval(abs(phi))
     write(*,'(a,es18.9e3)') 'Backward error     : ',err
-    if(c%write_vtk) call vtk_state(c%vtk_directory,c%task,-1,0.0_dp,model%mesh,current,phi,charge,.true.)
+    prefix='scattering'
+    if(c%task=='rcs') prefix='rcs_solution'
+    if(c%write_vtk) call vtk_state(c%vtk_directory,prefix,-1,0.0_dp,model%mesh,current,phi,charge,.true.)
     if(c%task=='rcs') call write_rcs(c,model%mesh,current,f)
   end subroutine
   subroutine summary_row(u,time,source,m,t,shunt)
