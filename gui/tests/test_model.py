@@ -63,7 +63,7 @@ class ModelTests(unittest.TestCase):
             text = m.config_text(self.state, self.root, self.root/'results')
             self.assertIn('--task '+m.TASKS[task][1], text)
             self.assertEqual('--shunt-R ' in text, task in (4, 5))
-            self.assertIn('"'+str(self.mesh)+'"', text)
+            self.assertIn('"'+str(self.mesh.resolve())+'"', text)
 
     def test_invalid_numbers_steps_and_nodes(self):
         self.state['task'] = 4

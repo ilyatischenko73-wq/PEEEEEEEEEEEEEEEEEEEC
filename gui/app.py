@@ -94,7 +94,7 @@ class Window(W.QMainWindow):
     def build_setup(self):
         page, layout = self.panel('1 · Расчёт')
         split = W.QSplitter()
-        layout.addWidget(split)
+        layout.addWidget(split, 1)
         settings = W.QWidget()
         form = W.QFormLayout(settings)
         self.root = W.QLineEdit(str(ROOT))
@@ -176,11 +176,12 @@ class Window(W.QMainWindow):
         actions.addWidget(self.stop_button)
         actions.addWidget(button('Предпросмотр импульса', self.plot_pulse))
         self.run_status = W.QLabel('Расчёт не запущен')
+        self.run_status.setWordWrap(True)
         actions.addWidget(self.run_status, 1)
         layout.addLayout(actions)
         self.log = W.QPlainTextEdit()
         self.log.setReadOnly(True)
-        self.log.setMaximumHeight(180)
+        self.log.setFixedHeight(140)
         layout.addWidget(self.log)
 
     def state(self):
